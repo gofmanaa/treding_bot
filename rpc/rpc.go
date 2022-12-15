@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -13,12 +14,8 @@ import (
 )
 
 func NewClient(apiKey string, apiSecret string) (Client, error) {
-	return &MyRPCClient{}, nil
+	return &MyRPCClient{apiKey: apiKey, apiSecret: apiSecret}, nil
 }
-
-// type RPCClient interface {
-// 	NewClient(apiKey string, apiSecret string) (*Client, error)
-// }
 
 // .rpc
 type Client interface {
@@ -70,6 +67,7 @@ func (c *MyRPCClient) Ticker(pair string) (*types.Ticker, error) {
 	var ticker types.Ticker
 	err = json.Unmarshal(body, &ticker)
 	if err != nil {
+		log.Printf("error, can't unmarshal tiker: %s", err)
 		return nil, err
 	}
 
@@ -88,6 +86,7 @@ func (c *MyRPCClient) Buy(pair string, amount, price float64) error {
 	// Add the API key and secret to the request as headers
 	req.Header.Add("X-API-Key", c.apiKey)
 	req.Header.Add("X-API-Secret", c.apiSecret)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	// Add the trading pair, amount, and price to the request as form data
 	f := url.Values{}
@@ -127,6 +126,7 @@ func (c *MyRPCClient) Sell(pair string, amount, price float64) error {
 	// Add the API key and secret to the request as headers
 	req.Header.Add("X-API-Key", c.apiKey)
 	req.Header.Add("X-API-Secret", c.apiSecret)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	// Add the trading pair, amount, and price to the request as form data
 	f := url.Values{}
