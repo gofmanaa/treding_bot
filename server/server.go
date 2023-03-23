@@ -32,8 +32,8 @@ func main() {
 		// Get the current price of the trading pair
 		price, err := getPrice(pair)
 		if err != nil {
-			// Return an error if the price could not be retrieved
 			log.Printf("error getPrice: %s", err)
+			// Return an error if the price could not be retrieved
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -99,6 +99,7 @@ func buyHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	log.Printf("buy tiket %s, amount=%f, price=%f\n", pair, amount, price)
 
 	// Return a success response if the buy was executed successfully
 	w.WriteHeader(http.StatusOK)
@@ -148,7 +149,7 @@ func sellHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	log.Printf("sell tiket %s, amount=%f, price=%f\n", pair, amount, price)
 	// Return a success response if the sell was executed successfully
 	w.WriteHeader(http.StatusOK)
 }
@@ -183,6 +184,7 @@ func getPrice(pair string) (float64, error) {
 		log.Printf("error, can't decode json:%s", err)
 		return 0, err
 	}
+	log.Printf("tiket=%s current price=%s\n", tiket.Symbol, tiket.Price)
 
 	return strconv.ParseFloat(tiket.Price, 64)
 }
